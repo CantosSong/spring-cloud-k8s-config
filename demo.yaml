@@ -84,6 +84,6 @@ items:
     data:
       application.yml: |-
         greeting:
-          message: Say Hello to the World111
+          message: Say Hello to the World1233
         farewell:
           message: Say Goodbye
