@@ -66,10 +66,14 @@ items:
                 httpGet:
                   port: 8082
                   path: /actuator/health/readiness
+                initialDelaySeconds: 30
+                periodSeconds: 10
               livenessProbe:
                 httpGet:
                   port: 8082
                   path: /actuator/health/liveness
+                initialDelaySeconds: 30
+                periodSeconds: 10
               ports:
                 - containerPort: 8082
                 - containerPort: 8081
@@ -80,6 +84,6 @@ items:
     data:
       application.yml: |-
         greeting:
-          message: Say Hello to the World
+          message: Say Hello to the World111
         farewell:
           message: Say Goodbye
