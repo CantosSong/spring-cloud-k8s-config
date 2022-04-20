@@ -31,7 +31,7 @@ items:
     roleRef:
       kind: Role
       apiGroup: rbac.authorization.k8s.io
-      name: namespace-reader
+      name: demo
     subjects:
       - kind: ServiceAccount
         name: demo
@@ -39,7 +39,7 @@ items:
     kind: Role
     metadata:
       namespace: default
-      name: namespace-reader
+      name: demo
     rules:
       - apiGroups: ["", "extensions", "apps"]
         resources: ["services", "endpoints", "configmaps", "pods", "secrets"]
