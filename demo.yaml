@@ -1,0 +1,85 @@
+---
+apiVersion: v1
+kind: List
+items:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: demo
+      name: demo
+    spec:
+      ports:
+        - name: http
+          port: 80
+          targetPort: 8081
+      selector:
+        app: demo
+      type: ClusterIP  
+  - apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      labels:
+        app: demo
+      name: demo
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      labels:
+        app: demo
+      name: demo:view
+    roleRef:
+      kind: Role
+      apiGroup: rbac.authorization.k8s.io
+      name: namespace-reader
+    subjects:
+      - kind: ServiceAccount
+        name: demo
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      namespace: default
+      name: namespace-reader
+    rules:
+      - apiGroups: ["", "extensions", "apps"]
+        resources: ["services", "endpoints", "configmaps", "pods", "secrets"]
+        verbs: ["get", "list", "watch"]
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: demo-deployment
+    spec:
+      selector:
+        matchLabels:
+          app: demo
+      template:
+        metadata:
+          labels:
+            app: demo
+        spec:
+          serviceAccountName: demo
+          containers:
+            - name: demo
+              image: docker.io/library/demo:0.0.1-SNAPSHOT
+              imagePullPolicy: IfNotPresent
+              readinessProbe:
+                httpGet:
+                  port: 8082
+                  path: /actuator/health/readiness
+              livenessProbe:
+                httpGet:
+                  port: 8082
+                  path: /actuator/health/liveness
+              ports:
+                - containerPort: 8082
+                - containerPort: 8081
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: demo
+    data:
+      application.yml: |-
+        greeting:
+          message: Say Hello to the World
+        farewell:
+          message: Say Goodbye
